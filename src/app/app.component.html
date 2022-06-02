@@ -1,0 +1,18 @@
+<div class="ui secondary menu margin-menu">
+  <a routerLink="home" class="item mr2"><b class="purple-color">KWM GO Student</b></a>
+  <a routerLink="home" routerLinkActive="active" class="activate item">Home</a>
+  <a routerLink="courses" routerLinkActive="active" class="item">Überblick</a>
+  <a *ngIf="isLoggedIn() && isTutor()" routerLink="tutor" routerLinkActive="active" class="item">Kurs erstellen</a>
+  <div class="right menu">
+    <a routerLink="login" routerLinkActive="active" class="ui item">
+      <p *ngIf="isLoggedIn()"><i class="user purple icon"></i> {{getName()}}</p>
+      <p *ngIf="!isLoggedIn()">Login <i class="right arrow purple icon"></i></p>
+    </a>
+  </div>
+</div>
+
+
+
+
+
+<router-outlet></router-outlet>

@@ -1,0 +1,15 @@
+<div class="hero-image-standard">
+  <div class="hero-text">
+    <h1 class="ui centered row">Aktuelle Nachhilfe Angebote im Überblick</h1><br>
+    <p class="ui centered grid">Logge dich ein und buche die angezeigten Angebote!</p>
+  </div>
+</div>
+<div class="mb5"></div>
+
+<div class="ui container grid">
+  <a *ngFor="let course of courses" class="item bs-course-list-item" [course]="course" [routerLink]="course.cnum"></a>
+  <div *ngIf="!courses" class="ui active dimmer">
+    <div class="ui large text loader">Kurse werden geladen...</div>
+  </div>
+  <p *ngIf="courses && !courses.length">Es wurden noch keine Kurse eingetragen.</p>
+</div>

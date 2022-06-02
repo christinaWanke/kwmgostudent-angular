@@ -1,0 +1,100 @@
+<div class="hero-image-standard">
+  <div class="hero-text">
+    <h1>Hier kannst du Kurse erstellen und bearbeiten!</h1>
+  </div>
+</div>
+
+<form class="ui large form margin-form" [formGroup]="courseForm" (ngSubmit)="submitForm()">
+
+  <input type="hidden" formControlName="id">
+
+  <div class="field">
+    <label>Titel des Kurses</label>
+    <input formControlName="title">
+    <div *ngIf="errors['title']" class="ui negative message">{{errors['title']}}</div>
+  </div>
+
+  <div class="field">
+    <label>Kürzel des Kurses</label>
+    <input formControlName="cnum">
+    <div *ngIf="errors['cnum']" class="ui negative message">{{errors['cnum']}}</div>
+  </div>
+
+  <div class="field">
+    <label>Beschreibung</label>
+    <textarea formControlName="description" rows="3"></textarea>
+  </div>
+
+  <div class="field">
+    <label>Semester in dem der Kurs gelehrt wird</label>
+    <input type="number" formControlName="semester">
+    <div *ngIf="errors['semester']" class="ui negative message">{{errors['semester']}}</div>
+  </div>
+
+  <div class="field">
+    <label>Professor des Kurses</label>
+    <input formControlName="professor">
+  </div>
+
+  <div class="field">
+    <label>Termine</label>
+    <div formArrayName="slots">
+
+      <div class="fields"
+           *ngFor="let control of slots.controls; index as i; last as l" [formGroupName]="i">
+
+        <input type="hidden" formControlName="id">
+
+        <div class="four wide field">
+          <input type="date" formControlName="day" placeholder="1.1.2022">
+        </div>
+
+        <div class="four wide field">
+          <input type="time" formControlName="from" placeholder="11:00">
+        </div>
+
+        <div class="four wide field">
+          <input type="time" formControlName="to" placeholder="13:00">
+        </div>
+
+        <div class="one wide field" *ngIf="l">
+          <button (click)="addSlotsControl()" class="ui large button" type="button">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="field">
+    <label>Bilder</label>
+    <div formArrayName="images">
+      <div class="fields" *ngFor="let control of images?.controls; index as i; last as l"
+           [formGroupName]="i">
+        <input type="hidden" formControlName="id">
+        <div class="ui labeled input nine wide field">
+          <div class="ui label">
+            http://
+          </div>
+          <input formControlName="url" placeholder="https://bild{{i+1}}_url">
+        </div>
+        <div class="six wide field">
+          <input formControlName="title" placeholder="bild{{i+1}}_title">
+        </div>
+        <div class="one wide field" *ngIf="l">
+          <button (click)="addThumbnailControl()" class="ui large button" type="button">+</button>
+        </div>
+      </div>
+    </div>
+    <!--div *ngIf="errors['images']" class="ui negative message">{{errors['images']}}</div-->
+  </div>
+
+
+  <button type="submit" class="ui right floated inverted purple button" [disabled]="courseForm.invalid">Kurs speichern</button>
+
+  <div class="mb5"></div>
+
+</form>
+
+
+
+

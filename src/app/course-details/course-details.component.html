@@ -1,0 +1,112 @@
+<div class="hero-image" *ngIf="course.images && course.images[0]" [ngStyle]="{'background-image': 'url(' + course.images[0].url + ')'}">
+  <div class="hero-text">
+    <h1>{{course.title}}</h1>
+    <p>erstellt von {{course.user.firstName}} {{course.user.lastName}}</p>
+  </div>
+</div>
+
+
+<ng-container *ngIf="course">
+
+  <div class="ui segment margin-form">
+    <div class="ui two column very relaxed grid">
+      <div class="column">
+        <h4>Inhalte des Kurses:</h4>
+        <p>{{course.description}}</p>
+        <p><b>Kürzel:</b> {{course.cnum}}</p>
+        <p><b>Semester:</b> {{course.semester}}</p>
+        <p><b>Professor:</b> {{course.professor}}</p>
+      </div>
+      <div class="column">
+        <h4>angeboten von:</h4>
+        <div class="ui card">
+          <div class="content">
+            <div class="header">{{course?.user?.firstName}} {{course?.user?.lastName}}</div>
+            <div class="meta">
+              <span class="right floated time"></span><br>
+              <span class="category">Beschreibung:</span>
+            </div>
+            <div class="description">
+              <p>{{course.user.description}}</p>
+            </div>
+          </div>
+          <div class="extra content">
+            <div class="right floated author">
+              <i class="icon user"></i> {{course?.user?.persnum}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ui vertical divider">
+      von
+    </div>
+  </div>
+</ng-container>
+  <!--img class="ui float fluid image" height="300" *ngIf="course.images && course.images[0]" [src]="course.images[0].url"-->
+
+<div class="ui centered grid">
+  <button [routerLink]="'/courses'" class="ui purple button">Zum Überblick</button>
+  <button *ngIf="isLoggedIn() && isTutor()" class="ui tiny purple labeled icon button" (click)="removeCourse()"><i class="trash icon"></i>Kurs löschen</button>
+  <!--button *ngIf="isLoggedIn()" class="ui yellow labeled icon button" (click)="editCourse()"><i class="write icon"></i>Kurs bearbeiten</button-->
+  <a *ngIf="isLoggedIn() && isTutor()" class="ui tiny teal labeled icon button" [routerLink]="['../../tutor', course?.cnum]"><i class="write icon"></i>Kurs bearbeiten</a>
+</div>
+
+
+
+<h3 class="ui centered grid" style="margin-top: 4em">Zeit der Kurse</h3><br><br>
+<p class="ui centered grid">Hier siehst du, wann die Kurse stattfinden. Logge dich ein um einen Termin zu buchen!</p>
+
+<div class="margin-form">
+
+<table class="ui celled table">
+  <thead>
+  <tr>
+    <th>Tag</th>
+    <th>von</th>
+    <th>bis</th>
+    <th>Buchung</th>
+    <th *ngIf="isLoggedIn() && !isTutor()"></th>
+  </tr>
+  </thead>
+  <tbody *ngFor="let slot of course.slots; index as i; last as l">
+  <td>{{slot.day | date: 'longDate'}}</td>
+  <td>{{slot.from | slice: 0: 5}}</td>
+  <td>{{slot.to | slice: 0: 5}}</td>
+  <td><p *ngIf="slot.isBooked == false">Nicht gebucht</p><p *ngIf="slot.isBooked == true">gebucht</p></td>
+  <td *ngIf="isLoggedIn() && !isTutor()"><button (click)="setBooked(i)" [disabled]="slot.isBooked"  class="ui purple button"> <i class="calendar outline icon"></i>Kurs buchen</button></td>
+  </tbody>
+</table>
+</div>
+
+
+
+<div class="ui comments margin-form">
+  <h3 class="ui dividing header">Kommentare zu den Zeiten</h3>
+  <ng-container *ngFor="let comment of course.comments; index as i">
+  <div class="comment">
+    <a class="avatar">
+      <img src="./assets/matt.jpeg">
+    </a>
+    <div class="content">
+      <a class="author" >{{comment.user?.firstName}} {{comment.user?.lastName}}</a>
+      <div class="text">
+        {{comment.text}}
+      </div>
+      <div class="actions">
+        <a class="reply" *ngIf="userID() === comment.user_id" (click)="removeComment(comment.user_id, comment.id)">Löschen <i class="delete icon"></i></a>
+      </div>
+    </div>
+  </div>
+  </ng-container>
+
+
+  <form *ngIf="isLoggedIn()" [formGroup]="commentForm" (ngSubmit)="submitComment()" class="ui reply form">
+    <input type="hidden" formControlName="id">
+    <div class="field">
+      <textarea  formControlName="text"></textarea>
+    </div>
+    <button type="submit" class="ui teal labeled submit icon button" [disabled]="commentForm.invalid"> <i class="icon edit"></i>Kommentieren</button>
+  </form>
+  <div class="mb5"></div>
+</div>

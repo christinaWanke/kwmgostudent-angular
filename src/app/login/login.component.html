@@ -1,0 +1,127 @@
+<div class="hero-image-standard">
+  <div class="hero-text">
+    <h1 *ngIf="!isLoggedIn()">Logge dich ein, um KWM Go Student optmal nutzen zu können!</h1>
+    <h1 *ngIf="isLoggedIn()">Wilkommen zurück, {{getUser().firstName}} {{getUser().lastName}}!</h1>
+    <button *ngIf="isLoggedIn()" type="button" class="ui centered row inverted purple button" (click)="logout()">Logout</button>
+  </div>
+</div>
+
+<div *ngIf="!isLoggedIn()">
+
+
+
+  <form class="ui large form margin-form" [formGroup]="loginForm" (ngSubmit)="login()">
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="username" formControlName="username">
+      <div *ngIf="loginForm.get('username')?.invalid &&
+      (loginForm.get('username')?.dirty ||
+      loginForm.get('username')?.touched) &&
+      loginForm.get('username')?.hasError('required')" class="ui negative message">
+        Benutzername ist verpflichtend</div>
+
+      <div *ngIf="loginForm.get('username')?.invalid &&
+        (loginForm.get('username')?.dirty ||
+        loginForm.get('username')?.touched) &&
+        loginForm.get('username')?.hasError('email')" class="ui negative message">
+        E-Mail Format ist ungültig!
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Passwort</label>
+      <input type="password" formControlName="password">
+    </div>
+
+    <div *ngIf="loginForm.get('password')?.invalid &&
+      (loginForm.get('password')?.dirty ||
+      loginForm.get('password')?.touched) &&
+      loginForm.get('password')?.hasError('required')" class="ui negative message">Passwort ist verpflichtend</div>
+
+    <button type="submit" class="ui button" [disabled]="loginForm.invalid">Login</button>
+  </form>
+</div>
+
+
+<div *ngIf="isLoggedIn()">
+
+  <div class="ui segment margin-form">
+    <div class="ui two column very relaxed grid">
+      <div class="column">
+        <h4>Über dich:</h4>
+        <p><b>Personennummer:</b> {{getUser().persnum}}</p>
+        <p><b>E-Mail:</b> {{getUser().email}}</p>
+        <p><b>Semester:</b> {{getUser().semester}}</p>
+        <p *ngIf="getUser().isTutor"><b>Rolle:</b> Ich bin ein Tutor.</p>
+      </div>
+      <div class="column">
+        <h4>Beschreibung:</h4>
+        <p>{{getUser().description}}</p>
+        <p></p>
+        <p></p>
+      </div>
+    </div>
+    <div class="ui vertical divider">
+      und
+    </div>
+  </div>
+
+  <ng-container *ngIf="isTutor()">
+
+  <h3 class="ui centered grid">Angebotene Kurse</h3><br><br>
+  <p class="ui centered grid">Hier siehst du welche deiner Kurse gebucht wurden:</p>
+  <div class="margin-form">
+
+  <table class="ui celled table">
+    <thead>
+    <th>Kurs</th>
+    <th>Datum</th>
+    <th>Status</th>
+    </thead>
+    <tbody>
+    <ng-container *ngFor="let course of courses">
+      <ng-container *ngIf="course.user_id == getUser().id">
+        <ng-container *ngFor="let slot of course.slots; index as x; last as y">
+          <tr>
+            <td><a [routerLink]="['../courses/', course.cnum]"> {{course.title}}</a></td>
+            <td>{{slot.day | date: 'longDate'}} </td>
+            <td *ngIf="slot.isBooked==true; else showCalender"><i class="calendar check icon purple"></i>gebucht</td>
+          </tr>
+        </ng-container>
+      </ng-container>
+      <ng-template #showCalender>
+        <td><i class="calendar outline green icon"></i>noch frei
+        </td>
+      </ng-template>
+    </ng-container>
+
+    </tbody>
+  </table>
+  </div>
+  <br>
+    <div class="ui center aligned basic segment">
+
+    <a routerLink="../tutor">
+      <div class="ui purple inverted labeled icon button">
+        Kurs erstellen
+        <i class="write icon"></i>
+      </div>
+    </a>
+    </div>
+  </ng-container>
+  <div class="ui center aligned basic segment">
+
+    <a routerLink="../courses">
+      <div class="ui purple labeled icon button">
+
+        Zu den Kursen
+        <i class="right arrow icon"></i>
+      </div>
+    </a>
+  </div>
+  <div class="mb5"></div>
+
+
+</div>
+
